@@ -55,54 +55,55 @@
         to=setTimeout(function(){handle('scroll')},100);
     }); */
 
-    let DropPlus = {
-        maxpicture: 300000,
-        maxfile: 50000,
-        hugefile: 2000000,
-        maxwidth: 1024,
-        maxheight: 1024,
-        debug: false,
-        ajax_handle: function (data) {
 
-            if ("debug" in data) {
-                DropPlus.log(data.debug);
-            }
-            if ("analize" in data) {
-                DropPlus.log(data.analize);
-            }
-            if ("table" in data) {
-                $('#table').html(data.table);
-            }
-            if (!data.data) {
-                DropPlus.log(data);
-                return;
-            }
-            let u = data.data[0] || {name: "xxx"};
-            if ("progress" in u) {
-                if ($("#progress").length == 0) {
-                    $("#uploads ul").append('<li><progress id="progress" max="1" value="' + u.progress + '">' + u.name + "</progress></li>");
-                }
-                if (u.progress < 1) {
-                    $("#progress").attr("value", u.progress);
-                } else {
-                    let progress = $("#progress"), txt = progress.html(), parent = progress.parent();
-                    progress.remove();
-                    parent.html(txt);
-                    if ("analize" in data) {
-                        let report = [];
-                        if (data.analize.itemfound) report.push('товаров: ' + data.analize.itemfound);
-                        report.push('записано в базу: ' + (data.analize.itemstored || 0));
-                        if (data.analize.error) {
-                            report.push('ошибок: ' + data.analize.error.length);
-                            DropPlus.log(data.analize.error);
-                        }
-                        $('<span>').appendTo(parent).html(' ' + report.join(', '))
-                    }
-                }
-            } else {
-                $("#uploads ul").append("<li>" + u.name + "</li>");
-            }
-            DropPlus.log(u);
-        }
-    }
 })();
+DropPlus = {
+    maxpicture: 300000,
+    maxfile: 50000,
+    hugefile: 2000000,
+    maxwidth: 1024,
+    maxheight: 1024,
+    debug: false,
+    ajax_handle: function (data) {
+
+        if ("debug" in data) {
+            DropPlus.log(data.debug);
+        }
+        if ("analize" in data) {
+            DropPlus.log(data.analize);
+        }
+        if ("table" in data) {
+            $('#table').html(data.table);
+        }
+        if (!data.data) {
+            DropPlus.log(data);
+            return;
+        }
+        let u = data.data[0] || {name: "xxx"};
+        if ("progress" in u) {
+            if ($("#progress").length == 0) {
+                $("#uploads ul").append('<li><progress id="progress" max="1" value="' + u.progress + '">' + u.name + "</progress></li>");
+            }
+            if (u.progress < 1) {
+                $("#progress").attr("value", u.progress);
+            } else {
+                let progress = $("#progress"), txt = progress.html(), parent = progress.parent();
+                progress.remove();
+                parent.html(txt);
+                if ("analize" in data) {
+                    let report = [];
+                    if (data.analize.itemfound) report.push('товаров: ' + data.analize.itemfound);
+                    report.push('записано в базу: ' + (data.analize.itemstored || 0));
+                    if (data.analize.error) {
+                        report.push('ошибок: ' + data.analize.error.length);
+                        DropPlus.log(data.analize.error);
+                    }
+                    $('<span>').appendTo(parent).html(' ' + report.join(', '))
+                }
+            }
+        } else {
+            $("#uploads ul").append("<li>" + u.name + "</li>");
+        }
+        DropPlus.log(u);
+    }
+}

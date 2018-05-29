@@ -242,7 +242,8 @@ $(function () {
                 var data = {};
                 try {
                     var $txt = (this.responseText || '""').toString();
-                    $txt = $txt.replace(/^[^{]*|[^}]*$/g, '');
+                    $txt = $txt.replace(/^[^{]*/,'')
+                        .replace(/"}.+$/s,'"}');
                     if ('' != $txt) {
                         data = JSON.parse($txt);
                         //data = (new Function('return ' + $txt))();
