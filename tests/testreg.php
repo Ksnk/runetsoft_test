@@ -17,7 +17,8 @@ class echoClass implements Ksnk\project\itemStore {
 
 }
 
-$import= new Ksnk\project\ItemImport(new echoClass);
+$import=  Ksnk\project\ItemImport::get();
+$import->set_store(new echoClass);
 
 $src=[
 'Toyo H08 195/75R16C 107/105S TL Летние',
