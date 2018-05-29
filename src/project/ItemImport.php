@@ -32,9 +32,7 @@ class ItemImport
         return self::$instance;
     }
 
-    private function __construct($store = null)
-    {
-
+    public function set_store($store=null){
         if (is_null($store)) {
             $this->store = new itemDatabaseStore(
             // открываем базу данных, предполагая, что находимся в окружении ENGINE
@@ -44,6 +42,10 @@ class ItemImport
             // потенциальная возможность сохранить ввод в более другой форме
             $this->store = $store;
         }
+    }
+
+    private function __construct($store = null)
+    {
 
         // конструируем регулярку и прописываем названия полей захватываемых данных.
         // Использовать именованные маски не люблю.
@@ -98,6 +100,9 @@ class ItemImport
      */
     public function importFile($filename, $callback)
     {
+        if (!$this->store) {
+            $this->set_store(); // устанавливаем дефолтный транспорт
+        }
         if (is_readable($filename)) {
             $tail = '';
             $handle = fopen($filename, 'r+');
