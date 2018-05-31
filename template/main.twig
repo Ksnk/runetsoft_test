@@ -45,7 +45,7 @@
     </div>
 </div>
 <main role="main" class="container">
-    <div id="table"></div>
+    <div id="table">{{ table }}</div>
 </main>
 <footer class="footer">
     <div class="container">
@@ -64,11 +64,6 @@
 <!-- Latest compiled and minified JavaScript -->
 <script src="https://code.jquery.com/jquery-3.3.1.min.js" crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-{% if table %}
-<script>
-    $('#table').html({{ table }});
-</script>
-{% endif %}
 <script type="text/javascript" src="js/main.js"></script>
 <script type="text/javascript" src="vendors/Ksnk/js/dropplus.js"></script>
 </html>

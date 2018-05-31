@@ -152,7 +152,7 @@ class Main
             'page.perpage'=>(int)ENGINE::option('perpage',20),
             'page.total'=>(int)$import->getTotal(),
         ]);
-        ENGINE::set_option('page.table', utf8_encode(json_encode($this->getData())));
+        ENGINE::set_option('page.table', $this->getData());
         return 'ok';
     }
 

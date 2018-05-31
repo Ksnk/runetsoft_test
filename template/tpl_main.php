@@ -1,254 +1,297 @@
 <?php
+/**
+ * this file is created automatically at "31 May 2018 18:08". Never change anything,
+ * for your changes can be lost at any time. 
+ */ 
+class tpl_main extends tpl_base {
+function __construct(){
+parent::__construct();
+$this->macro['table']=array($this,'_table');
+$this->macro['pager']=array($this,'_pager');
+}
 
-class tpl_main
-{
+function _table(&$namedpar,$data=0){
+extract($namedpar);
+$result='';
+if( $data ) {
 
-    static function _table($data){
-        $keys=array_keys($data['data'][0]);
-        $result= '<table><tr><th>'.implode('</th><th>',$keys).'</th></tr>';
-        foreach($data['data'] as $line){
-            $result.= '<tr><td>'.implode('</td><td>',array_values($line)).'</td></tr>';
-        }
-        $result.= '</table>';
-        return $result;
-    }
+$result.='
+    <table class="table table-striped">
+        <thead> 
+        <tr>
+            <th>id</th>';
+$loop1_array=self::ps($this->func_bk($data,0));
+if ((is_array($loop1_array) && !empty($loop1_array))||($loop1_array instanceof Traversable)){
+foreach($loop1_array as $cell =>$val){
 
-    static function _pager($data){
-        $result='';
+if( (($cell)!=('id')) ) {
 
-        if($data['total']>$data['perpage']) {
-            $result .= '<label> Перейти на страницу: <select data-handle="pager">';
-            $cnt = 0;
-            while ($data['total'] > 0) {
-                $result .= '<option value="' . ($cnt) . '"';
-                if ($data['page'] == $cnt)
-                    $result .= ' selected="selected"';
-                $result .= '>' . ($cnt + 1) . '</option>';
-                $cnt++;
-                $data['total'] -= $data['perpage'];
-            }
-            $result.='</select></label>';
-        }
-        $result .= '<label> выводить на странице : <select data-handle="perpage">';
-        foreach([5,10,15,20,50] as $cnt) {
-            $result .= '<option value="' . ($cnt) . '"';
-            if ($data['perpage'] == $cnt)
-                $result .= ' selected="selected"';
-            $result .= '>' . ($cnt ) . '</option>';
-        }
-        $result.='</select></label>';
-        $result .= '<button data-handle="cleardata"> Очистить все данные</button>';
-        return $result;
-    }
+$result.='
+                <th>'
+    .($cell)
+    .'</th>';
+};
+}};
+$result.='
+        </tr>
+        </thead>
+        <tbody>';
+$loop1_array=self::ps($data);
+if ((is_array($loop1_array) && !empty($loop1_array))||($loop1_array instanceof Traversable)){
+foreach($loop1_array as $row){
 
-    static function _($data)
-    {
-        return '<!DOCTYPE html>
-<html lang="en">
+$result.='
+    <tr>
+            <td><code class="w3-codespan">'
+    .$this->func_bk($row,'id')
+    .'</code></td>';
+$loop2_array=self::ps($row);
+if ((is_array($loop2_array) && !empty($loop2_array))||($loop2_array instanceof Traversable)){
+foreach($loop2_array as $cell =>$val){
+
+if( (($cell)!=('id')) ) {
+
+$result.='
+            <td>'
+    .($val)
+    .'</td>';
+};
+}};
+$result.='
+        </tr>';
+}};
+$result.='
+        </tbody>
+    </table>';
+}
+else {
+
+$result.='
+        No data';
+};
+    return $result;
+}
+
+function _pager(&$namedpar,$total=0,$perpage=0,$page=0,$url='#',$linkclass='',$styles=''){
+extract($namedpar);
+$result=' 
+    <div class="row"><div class="col-sm-8">';
+if( (($total)>($perpage)) ) {
+
+$result.='<ul class="pagination"';
+if( $styles ) {
+
+$result.=' style="'
+    .($styles)
+    .'"';
+};
+$result.='>';
+$maxnumb=ceil($total/$perpage);
+$start=(($page)-(3));
+if( (($start)>(1)) ) {
+
+$result.='<li><a data-handle="page" data-data="'
+    .((($start)-(1)))
+    .'"';
+if( $linkclass ) {
+
+$result.=' class="'
+    .($linkclass)
+    .'"';
+};
+$result.=' href="';
+if( (($start)==(2)) ) {
+
+$result.=((trim($url,'?&')));
+}
+else {
+
+$result.=($url)
+    .'page='
+    .((($start)-(1)));
+};
+$result.='">&laquo;</a>&nbsp;</li>';
+};
+$loop1_array=self::ps($this->func_range(7,1));
+if ((is_array($loop1_array) && !empty($loop1_array))||($loop1_array instanceof Traversable)){
+foreach($loop1_array as $xpage){
+
+$pagex=(($start)+($xpage));
+if( ((($pagex)>(0))) && ((($pagex)<=($maxnumb))) ) {
+
+if( (($pagex)==($page)) ) {
+
+$result.='<li class="active"><span>'
+    .($pagex)
+    .'<span class="sr-only">(current)</span></span></li>';
+}
+elseif( (($pagex)==(1)) ) {
+
+$result.='<li><a data-handle="page" data-data="'
+    .($pagex)
+    .'"';
+if( $linkclass ) {
+
+$result.=' class="'
+    .($linkclass)
+    .'"';
+};
+$result.=' href="'
+    .((trim($url,'?&')))
+    .'">'
+    .($pagex)
+    .'</a></li>';
+}
+else {
+
+$result.='<li><a data-handle="page" data-data="'
+    .($pagex)
+    .'"';
+if( $linkclass ) {
+
+$result.=' class="'
+    .($linkclass)
+    .'"';
+};
+$result.=' href="'
+    .($url)
+    .'page='
+    .($pagex)
+    .'">'
+    .($pagex)
+    .'</a></li>';
+};
+};
+}};
+if( (($pagex)<($maxnumb)) ) {
+
+$result.='<li><a data-handle="page" data-data="'
+    .((($pagex)+(1)))
+    .'"';
+if( $linkclass ) {
+
+$result.=' class="'
+    .($linkclass)
+    .'"';
+};
+$result.=' href="'
+    .($url)
+    .'page='
+    .((($pagex)+(1)))
+    .'">&raquo;</a></li>';
+};
+};
+$result.='</ul>'
+    .(isset($par['endif'])?$par['endif']:"")
+    .'</div>'
+    .(ENGINE::debug($perpage))
+    .'
+        <div class="col-sm-4">
+            <ul class="pagination ">';
+$loop1_array=self::ps(array(5,10,15,25,50));
+if ((is_array($loop1_array) && !empty($loop1_array))||($loop1_array instanceof Traversable)){
+foreach($loop1_array as $lab){
+
+if( (($perpage)!=($lab)) ) {
+
+$result.='
+                <li><a href="#" data-handle="perpage" data-data="'
+    .($lab)
+    .'">'
+    .($lab)
+    .'</a></li>';
+}
+else {
+
+$result.='
+                        <li class="active"><span>'
+    .($lab)
+    .'<span class="sr-only">(current)</span></span></li>';
+};
+}};
+$result.='
+            </ul> 
+        </div>
+    </div>';
+    return $result;
+}
+
+function _ (&$par){
+$result='<html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <title>' . $data['title'] . '</title>
-    <link href="//code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" type="text/css" rel="stylesheet">
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script>
-    <style>
-        /** таблицы */
-        .table-row {
-            display: table-row;
-        }
-        .table-row>span {
-            display: table-cell;
-        }
-        .table {
-            display: table;
-        }
-        /** бордеры  */
-        .table-row>span {
-            padding:5px 10px;
-        }
-        .table-row.head>span {
-            padding:5px 10px;
-            text-align: center;
-            font-weight: bold;
-        }
-        /** загрузко */
-        .dropme {
-            background: lightgray;
-        }
-        @keyframes timeout_mobile {
-            from {
-                transform: rotate(0deg); }
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../../../favicon.ico">
 
-            to {
-                transform: rotate(360deg); }
-        }
-        .wrapper_timeout {
-            position: fixed;
-            display: none;
-            height: 100%;
-            width: 100%;
-            top: 0;
-            background: #000;
-            left: 0;
-            z-index: 1100;
-            opacity: 0.6; 
-            }
-        .wrapper_timeout span {
-            font-size: 60px;
-            width: 60px;
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            margin-left: -30px;
-            margin-top: -30px;
-            padding-left: 15px;
-            animation-name: timeout_mobile;
-            animation-duration: 1200ms;
-            animation-iteration-count: infinite;
-            animation-timing-function: linear; 
-            color: white;
-        } 
-        /** ионические кнопочки */
-        .ion {
-            padding-right:5px;
-        }
-        .loading:before {
-            content: "\f29a"; /* ion-load-a */
-        }
-        .runonce:before {
-            content: "\f215"; /* play */
-        }
-        .runstop:before {
-            content: "\f201"; /* loop */
-        }
-        .running .runstop:before {
-            content: "\f210"; /* pause */
-        }
-        /* украшательства */
-        body {
-            font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
-            font-size: 14px;
-            line-height: 1.428571429;
-            color: #333;
-            background-color: #fff;
-        }
-        .dropzone {
-            border: dotted 3px lightgray;
-            min-height: 20px;
-            padding: 19px;
-            margin-bottom: 20px;
-            background-color: #f5f5f5;
-        }
-        .fixed .dropzone {
-            float: right;
-            width: 150px;
-            margin-right:30px;
-            margin-bottom: 0;
-            padding: 4px 19px;
-        }
-        .fixed .dropzone label {
-            display: none;
-        }
-        h3, .h3 {
-            font-size: 24px;
-        }
-        h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
-            font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
-            font-weight: 500;
-            line-height: 1.1;
-        }
-        .bold{
-            font-weight: bold;
-        }
-        h1, h2, h3 {
-            margin-top: 20px;
-            margin-bottom: 10px;
-        }
-        /**   */
-        .name {
-            font-weight: bold;
-        }
-        .complete {
-            color: darkgray;
-        }
-        .available {
-            color: darkgreen;
-        }
-        .notavailable {
-            color: darkred;
-        }
-        .title {
-            background: darkgray;
-            color: white;
-            font-weight: bold;
-        }
-        /** tristate */
-        .tristate {
-            padding: 5px 10px;
-            border:1px solid gray;
-            border-radius: 5px;
-            margin-right:3px;
-        }
-        .tristate.on:before {
-            content: "+" ; /* add */
-            color: green;
-        }
-        .tristate:before {
-           content: " " ; /* radio-button-off */
-           padding: 0 0.3em 0 0.1em;
-           font-weight: bold;
-        }
-        .tristate.off:before {
-            content: "-" ; /* button-off */
-            color: red;
-        }
-        /**  fixed line      */
-        .fixed {
-            position: fixed;
-            top: 0;
-            left: 0;
-            padding: 4px 20px;
-            background: white;
-            width: 100%;
-        }
-        .fixed .nofix {
-            display: none;
-        }
-        .unselectable {
-            -webkit-touch-callout: none;
-            -webkit-user-select: none;
-            -khtml-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-        }
+    <title>'
+    .(isset($par['title'])?$par['title']:"")
+    .'</title>
 
-    </style>
+    <!-- Bootstrap core CSS -->
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- Custom styles for this template -->
+    <link href="main.css" rel="stylesheet">
 </head>
 <body>
-<div id="buttons" class="unselectable">
-<form class="file_upload dropzone" title="Сюда можно перетащить файл с данными, или просто нажать на кнопку \'Загрузить\'">
-<input type="hidden" name="handler" value="::upload">
-    Drop your data file here<span class="nofix">, or upload it by usual way</span><br>
-    <label >
-    <input type="file" name="' . Main::get('file_uploader_name') . '[]" >
-</label></form>
+<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">Тестовое задание</a>
+        </div>
+        <div class="collapse navbar-collapse">
+
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="#clear" data-handle="cleardata">Очистить данные</a></li>
+
+            </ul>
+            <ul class="nav navbar-nav  navbar-right">
+
+                <form class="dropzone" title="Сюда можно перетащить файл с данными, или просто нажать на кнопку \'Загрузить\'">
+                    <input type="hidden" name="handler" value="::upload">
+
+                    <input type="file" name="'
+    .($this->callex('Main','get','file_uploader_name'))
+    .'[]" >
+                </form>
+            </ul>
+        </div><!--/.nav-collapse -->
+    </div>
 </div>
-<div id="uploads">
-    <ul>
+<main role="main" class="container">
+    <div id="table">'
+    .(isset($par['table'])?$par['table']:"")
+    .'</div>
+</main>
+<footer class="footer">
+    <div class="container">
+        <span class="text-muted"><div id="uploads">
+    <ul style="margin-bottom: 0;">
 
     </ul>
-</div><div id="info"></div>
-<div id="table"></div>
-<div class="wrapper_timeout" >
-<span class="ion loading"></span>
 </div>
+            <div id="info"></div></span>
+    </div>
+</footer>
+
+
 </body>
-<script>
-$(\'#table\').html('.json_encode($data['table']).');
-</script>
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://code.jquery.com/jquery-3.3.1.min.js" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 <script type="text/javascript" src="js/main.js"></script>
 <script type="text/javascript" src="vendors/Ksnk/js/dropplus.js"></script>
-
 </html>';
-    }
+    return $result;
+}
 }
