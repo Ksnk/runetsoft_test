@@ -1,6 +1,6 @@
 <?php
 /**
- * this file is created automatically at "31 May 2018 18:08". Never change anything,
+ * this file is created automatically at "31 May 2018 18:20". Never change anything,
  * for your changes can be lost at any time. 
  */ 
 class tpl_main extends tpl_base {
@@ -180,12 +180,10 @@ $result.=' href="'
     .((($pagex)+(1)))
     .'">&raquo;</a></li>';
 };
+$result.=' 
+            </ul>';
 };
-$result.='</ul>'
-    .(isset($par['endif'])?$par['endif']:"")
-    .'</div>'
-    .(ENGINE::debug($perpage))
-    .'
+$result.='</div>
         <div class="col-sm-4">
             <ul class="pagination ">';
 $loop1_array=self::ps(array(5,10,15,25,50));
@@ -210,7 +208,8 @@ $result.='
 };
 }};
 $result.='
-            </ul> 
+            </ul>
+
         </div>
     </div>';
     return $result;

@@ -68,7 +68,7 @@
 <script type="text/javascript" src="vendors/Ksnk/js/dropplus.js"></script>
 </html>
 
-{% macro table ( data ) %}
+{%- macro table ( data ) %}
     {% if data %}
     <table class="table table-striped">
         <thead>
@@ -102,7 +102,7 @@
     {% endif %}
 {% endmacro %}
 
-{%  macro pager (total, perpage, page, url='#', linkclass='', styles='') %}
+{%-  macro pager (total, perpage, page, url='#', linkclass='', styles='') %}
     ##
     ##   Генерация страничной адресации
     ##
@@ -112,31 +112,31 @@
             {%- set maxnumb= (total) // perpage
                 set start = page-3
                 if start>1 -%}<li><a data-handle="page" data-data="{{start-1}}"{% if linkclass %} class="{{ linkclass }}"{% endif %} href="
-        {%if start==2 -%}
+            {%-if start==2 -%}
     {{trim(url,'?&')}}
-        {%- else -%}
+            {%- else -%}
     {{url}}page={{start-1}}
-        {%- endif %}">&laquo;</a>&nbsp;</li>
+            {%- endif %}">&laquo;</a>&nbsp;</li>
         {%- endif
             for xpage in range(7,1) -%}
         {%  set pageX=start+xpage -%}
-        {%  if pageX>0 and pageX <= maxnumb -%}
-            {%    if pageX == page -%}
+            {%-  if pageX>0 and pageX <= maxnumb -%}
+                {%   if pageX == page -%}
                 <li class="active"><span>{{pageX}}<span class="sr-only">(current)</span></span></li>
-            {%- elseif pageX==1 -%}
+                {%- elseif pageX==1 -%}
                 <li><a data-handle="page" data-data="{{pageX}}"{% if linkclass %} class="{{ linkclass }}"{% endif %} href="{{trim(url,'?&')}}">{{pageX}}</a></li>
-            {%- else -%}
+                {%- else -%}
                 <li><a data-handle="page" data-data="{{pageX}}"{% if linkclass %} class="{{ linkclass }}"{% endif %} href="{{url}}page={{pageX}}">{{pageX}}</a></li>
-            {%-  endif endif  endfor -%}
+                {%-  endif
+                endif
+            endfor -%}
             {%- if pageX < maxnumb -%}
                 <li><a data-handle="page" data-data="{{pageX+1}}"{% if linkclass %} class="{{ linkclass }}"{% endif %} href="{{url}}page={{pageX+1}}">&raquo;</a></li>
             {%- endif -%}
            ## {%- if total%}&nbsp;<span>Total:&nbsp;{{total}}</span>
-            {%- endif -%}
             </ul>
-        {% endif -%}
+        {%- endif -%}
 </div>
-        {% debug(perpage) %}
         <div class="col-sm-4">
             <ul class="pagination ">
                 {% for lab in [5,10,15,25,50] %}
@@ -151,31 +151,4 @@
         </div>
     </div>
 
-    {#
-            $result='';
-
-        if($data['total']>$data['perpage']) {
-            $result .= '<label> Перейти на страницу: <select data-handle="pager">';
-            $cnt = 0;
-            while ($data['total'] > 0) {
-                $result .= '<option value="' . ($cnt) . '"';
-                if ($data['page'] == $cnt)
-                    $result .= ' selected="selected"';
-                $result .= '>' . ($cnt + 1) . '</option>';
-                $cnt++;
-                $data['total'] -= $data['perpage'];
-            }
-            $result.='</select></label>';
-        }
-        $result .= '<label> выводить на странице : <select data-handle="perpage">';
-        foreach([5,10,15,20,50] as $cnt) {
-            $result .= '<option value="' . ($cnt) . '"';
-            if ($data['perpage'] == $cnt)
-                $result .= ' selected="selected"';
-            $result .= '>' . ($cnt ) . '</option>';
-        }
-        $result.='</select></label>';
-        $result .= '<button data-handle="cleardata"> Очистить все данные</button>';
-        return $result;
-#}
-{% endmacro %}
+{%- endmacro %}
