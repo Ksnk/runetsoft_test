@@ -1093,7 +1093,7 @@ class ENGINE
         $query_string = preg_replace(
             '#^' . ENGINE::option('page.rootsite') . '#i',
             '',
-            $_SERVER['REQUEST_URI']
+            UTILS::val($_SERVER,'REQUEST_URI', '/')
         );
 
         /** аварийное правило, если никакое правило роутинга не подойдет  */
@@ -1418,7 +1418,7 @@ class ENGINE
             unset($_SESSION['SAVE_POST'],$_SESSION['SAVE_FILES']);
         }
 
-        if ('POST' == $_SERVER['REQUEST_METHOD'] &&
+        if ('POST' == UTILS::val($_SERVER,'REQUEST_METHOD', 'GET') &&
             (array_key_exists('handler', $_POST) || !ENGINE::option('skip_post',false))
         ) {
             if (array_key_exists('handler', $_POST)) {

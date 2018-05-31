@@ -32,12 +32,13 @@ class itemDatabaseStore implements itemStore, itemLoad
      * @param int $perpage
      * @return array|bool
      */
-    public function getData(int $page = 0, int $perpage = 20)
+    public function getData(int $page = 1, int $perpage = 20)
     {
         if (!$this->db) return false;
+        if($page<=0)$page=1;
 
         $stm = $this->db->prepare('select i.name, a.* from rns_items as i left join rns_attr as a on i.id=a.id order by a.id limit ?, ?');
-        $stm->bindValue(1, $page * $perpage, \PDO::PARAM_INT);
+        $stm->bindValue(1, ($page-1) * $perpage, \PDO::PARAM_INT);
         $stm->bindValue(2, $perpage, \PDO::PARAM_INT);
         $stm->execute();
         return  $stm->fetchAll(\PDO::FETCH_ASSOC);

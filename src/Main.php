@@ -35,7 +35,6 @@ class Main
             $file_uploader_name = ENGINE::option('file_uploader_name');
             $upload_dir = ENGINE::option('upload_dir');
             $upload_suffix = ENGINE::option('drop.upload_suffix');
-
             if (!empty($_FILES[$file_uploader_name]['name'][0])) {
                 foreach ($_FILES[$file_uploader_name]['name'] as $position => $name) {
                     $xname = UTILS::translit($name);
@@ -127,14 +126,13 @@ class Main
     function getData(){
         $import = \Ksnk\project\ItemImport::get();
         $data=[
-            'page'=>1*ENGINE::option('page',0),
-            'perpage'=>1*ENGINE::option('perpage',20),
-            'total'=>1*$import->getTotal(),
+            'page'=>(int)ENGINE::option('page',1),
+            'perpage'=>(int)ENGINE::option('perpage',5),
+            'total'=>(int)$import->getTotal(),
         ];
         if($data['page'] * $data['perpage']>$data['total']){
             $data['page']=0;
         }
-        //ENGINE::debug($data);
         return
             ENGINE::template('tpl_main','_pager',$data).
             ENGINE::template('tpl_main','_table',[
@@ -148,7 +146,13 @@ class Main
      */
     function do_Default()
     {
-        ENGINE::set_option('page.table', $this->getData());
+        $import = \Ksnk\project\ItemImport::get();
+        ENGINE::set_option([
+            'page.page'=>(int)ENGINE::option('page',1),
+            'page.perpage'=>(int)ENGINE::option('perpage',20),
+            'page.total'=>(int)$import->getTotal(),
+        ]);
+        ENGINE::set_option('page.table', utf8_encode(json_encode($this->getData())));
         return 'ok';
     }
 

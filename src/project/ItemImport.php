@@ -172,6 +172,9 @@ class ItemImport
 
     public function getData($page=0, $perpage=20)
     {
+        if (!$this->store) {
+            $this->set_store(); // устанавливаем дефолтный транспорт
+        }
         if ($this->store instanceof itemLoad)
             return $this->store->getData($page, $perpage);
         else
@@ -179,12 +182,18 @@ class ItemImport
     }
     public function getTotal()
     {
+        if (!$this->store) {
+            $this->set_store(); // устанавливаем дефолтный транспорт
+        }
         if ($this->store instanceof itemLoad)
             return $this->store->getTotal();
         else
             return [];
     }
     public function deleteall(){
+        if (!$this->store) {
+            $this->set_store(); // устанавливаем дефолтный транспорт
+        }
         if(method_exists($this->store,'clear'))
             return $this->store->clear();
         else

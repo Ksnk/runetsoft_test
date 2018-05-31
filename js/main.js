@@ -1,5 +1,5 @@
 (function(){
-    let state = 0;
+    var state = 0;
 
     function handle(reason, _data) {
         switch (reason) {
@@ -11,17 +11,17 @@
                     }
                 );
                 break;
-            case "pager":
-                document.cookie = "page=" + _data + "; expires=Thu, 18 Dec 2022 12:00:00 UTC; path=/";
+            case "page":
+                document.cookie = "page=" + $(this).data('data') + "; expires=Thu, 18 Dec 2022 12:00:00 UTC; path=/";
                 document.location.reload();
                 break;
             case "perpage":
-                document.cookie = "perpage=" + _data + "; expires=Thu, 18 Dec 2022 12:00:00 UTC; path=/";
+                document.cookie = "perpage=" + $(this).data('data') + "; expires=Thu, 18 Dec 2022 12:00:00 UTC; path=/";
                 document.location.reload();
                 break;
             case 'scroll':
                 if (state === 0) { // pannel not fixed awhile
-                    let pos = $('#buttons').position();
+                    var pos = $('#buttons').position();
                     if ($(window).scrollTop() > pos.top) {
                         $('#buttons').addClass('fixed');
                         state = pos.top;
@@ -37,19 +37,20 @@
             default:
                 console.log(reason);
         }
+        return false;
     }
 
     $(document).on("click", "[data-handle]", function () {
-        if ($(this).is("span, button")) {
+        if ($(this).is("span, button, a")) {
             return handle.call(this, $(this).data("handle"));
         }
     }).on("change", "[data-handle]", function () {
         if ($(this).is("select")) {
-            let val = $(":selected", this).val();
+            var val = $(":selected", this).val();
             return handle.call(this, $(this).data("handle"), val);
         }
     });
-    /*let to=false;
+    /*var to=false;
     $(window).scroll(function() {
         if(to) clearTimeout(to);
         to=setTimeout(function(){handle('scroll')},100);
@@ -79,19 +80,19 @@ DropPlus = {
             DropPlus.log(data);
             return;
         }
-        let u = data.data[0] || {name: "xxx"};
+        var u = data.data[0] || {name: "xxx"};
         if ("progress" in u) {
             if ($("#progress").length == 0) {
-                $("#uploads ul").append('<li><progress id="progress" max="1" value="' + u.progress + '">' + u.name + "</progress></li>");
+                $("#uploads ul").html('<li><progress id="progress" max="1" value="' + u.progress + '">' + u.name + "</progress></li>");
             }
             if (u.progress < 1) {
                 $("#progress").attr("value", u.progress);
             } else {
-                let progress = $("#progress"), txt = progress.html(), parent = progress.parent();
+                var progress = $("#progress"), txt = progress.html(), parent = progress.parent();
                 progress.remove();
                 parent.html(txt);
                 if ("analize" in data) {
-                    let report = [];
+                    var report = [];
                     if (data.analize.itemfound) report.push('товаров: ' + data.analize.itemfound);
                     report.push('записано в базу: ' + (data.analize.itemstored || 0));
                     if (data.analize.error) {
@@ -102,7 +103,7 @@ DropPlus = {
                 }
             }
         } else {
-            $("#uploads ul").append("<li>" + u.name + "</li>");
+            $("#uploads ul").html("<li>" + u.name + "</li>");
         }
         DropPlus.log(u);
     }

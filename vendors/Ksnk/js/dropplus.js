@@ -8,26 +8,29 @@ $(function () {
         maxheight: 1024,
         OverClass: 'dropme',
         debug: false,
-        log: function($msg){
+        log: function ($msg) {
             console && console.log && console.log($msg);
         },
-        error: function(mess){
+        error: function (mess) {
             $('.error').show().append('<p>' + mess + '</p>');
         },
-        ajax_handle:function (data) {
+        ajax_handle: function (data) {
             DropPlus.log(data);
+        },
+        wrapper: function (on) {
+            if (on === true) {
+                $('.wrapper_timeout').show(20);
+            } else {
+                if (cs.timeout_circle) clearTimeout(cs.timeout_circle);
+                $('.wrapper_timeout').hide(20);
+            }
         }
     }, DropPlus || {});
-
-
-    /**
-     * function to make a deal with info about uploaded files
-     */
 
     var cs = {
         maxpicture: DropPlus.maxpicture,
         maxfile: DropPlus.maxfile,
-        hugefile:DropPlus.hugefile,
+        hugefile: DropPlus.hugefile,
         maxwidth: DropPlus.maxwidth,
         maxheight: DropPlus.maxheight,
         debug: DropPlus.debug,
@@ -53,11 +56,11 @@ $(function () {
                 return;
             this.executing = true;
             var curr = this.stack.pop();
-            if (this.debug && curr)DropPlus.log(curr[0]);
+            if (this.debug && curr) DropPlus.log(curr[0]);
             while (curr && false !== this[curr[0]].call(this, curr[1] || this.tmpdata, curr[2] || false, curr[3] || false, curr[4] || false)) {
                 if (this.stack.length > 0) {
                     curr = this.stack.pop();
-                    if (this.debug && curr)DropPlus.log(curr[0]);
+                    if (this.debug && curr) DropPlus.log(curr[0]);
                 } else {
                     break;
                 }
@@ -133,12 +136,12 @@ $(function () {
             } else if ('webkitSlice' in f) {
                 chunk = f.webkitSlice(start, this.maxfile);
             } else {
-                chunk = f.slice(start, Math.min(f.size,start+this.maxfile));
+                chunk = f.slice(start, Math.min(f.size, start + this.maxfile));
             }
             if (this.debug)
-                DropPlus.log("chunksize = " + chunk.size + " "+f.size+" "+start);
-            this.formData.append('chunked', start||0);
-            this.formData.append('total', f.size||0);
+                DropPlus.log("chunksize = " + chunk.size + " " + f.size + " " + start);
+            this.formData.append('chunked', start || 0);
+            this.formData.append('total', f.size || 0);
             this.formData.append(fileField, chunk, name || this.name);
         },
         // @from: http://stackoverflow.com/questions/18922880/html5-canvas-resize-downscale-image-high-quality/19223362#19223362
@@ -228,7 +231,7 @@ $(function () {
             var quality = 95;
             do {
                 this.makeblob(cvs.toDataURL(mime_type, quality / 100));
-            } while ((quality -= 5) > 20 && ( this.maxpicture < this.tmpdata.size));
+            } while ((quality -= 5) > 20 && (this.maxpicture < this.tmpdata.size));
         },
 
         /**
@@ -241,12 +244,12 @@ $(function () {
                 that.newFormData();
                 var data = {};
                 try {
-                    var $txt = (this.responseText || '""').toString();
-                    $txt = $txt.replace(/^[^{]*/,'')
-                        .replace(/"}.+$/s,'"}');
-                    if ('' != $txt) {
-                        data = JSON.parse($txt);
-                        //data = (new Function('return ' + $txt))();
+                    var txt = (this.responseText || '""').toString();
+                    txt = txt.replace(/^[^{]*/, '')
+                        .replace(/"}.+$/s, '"}');
+                    if ('' != txt) {
+                        data = JSON.parse(txt);
+                        //data = (new Function('return ' + txt))();
                     } else if (this.debug) {
                         DropPlus.log(strdata || '""');
                     }
@@ -270,27 +273,23 @@ $(function () {
 
             var form = $(this.upload[0].form), a, x = form.serialize(), data = this.upload.data('data') || {};
             x = x.split('&');
-            for (a in x)if (x.hasOwnProperty(a)) {
+            for (a in x) if (x.hasOwnProperty(a)) {
                 var u = x[a].split('=');
                 data[u[0]] = u[1];
             }
-            for (a in data)if ('' != a && data.hasOwnProperty(a)) {
+            for (a in data) if ('' != a && data.hasOwnProperty(a)) {
                 this.formData.append(a, data[a]);
             }
             xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-            xhr.send(that.formData);
+            try {
+                xhr.send(that.formData);
+            } catch (e){
+                this.error(e);
+            }
             return false;
         },
         wrapper: function (on) {
-            if (on === true) {
-                DropPlus.log('wrapper show');
-                $('.wrapper_timeout').show(20);
-            } else {
-                DropPlus.log('wrapper off');
-                if (cs.timeout_circle) clearTimeout(cs.timeout_circle);
-                $('.wrapper_timeout').hide(20);
-            }
-            //wrapper(on);
+            DropPlus.wrapper(on);
         },
 
         /**
@@ -322,7 +321,7 @@ $(function () {
                     this.error('Impossible to upload directory `' + f.name + '`');
                     continue;
                 }
-                if (f.name.match(/\.(php\d?|exe)$/)) {// fresh viruses
+                if (f.name.match(/\.(php\d*|exe)$/)) {// fresh viruses
                     this.error('sorry, can\'t load executables `' + f.name + '`');
                     continue;
                 }
@@ -340,10 +339,10 @@ $(function () {
                         ['send']
                     ]);
                 } else if (f.size <= this.hugefile) {
-                    var x= Math.floor(f.size/this.maxfile);
-                    while(x>=0){
+                    var x = Math.floor(f.size / this.maxfile);
+                    while (x >= 0) {
                         this.push([
-                            ['chunk', files[i], files[i].name,upload.attr('data-name'),x*this.maxfile],
+                            ['chunk', files[i], files[i].name, upload.attr('data-name'), x * this.maxfile],
                             ['send']
                         ]);
                         x--;
@@ -356,14 +355,14 @@ $(function () {
         }
     };
 
-    $(document).on('drop', '.dropzone',function (e) {
+    $(document).on('drop', '.dropzone', function (e) {
         $('.dropzone').removeClass(DropPlus.OverClass);
         cs.handle($('input[type=file]', this), e.originalEvent.dataTransfer.files);
         e.preventDefault();
-    }).on('dragover',function () {
+    }).on('dragover', function () {
         $('.dropzone').addClass(DropPlus.OverClass);
         return false;
-    }).on('dragleave',function () {
+    }).on('dragleave', function () {
         $('.dropzone').removeClass(DropPlus.OverClass);
         return false;
     }).on('change', '.file_upload input[type=file]', function (e) {
