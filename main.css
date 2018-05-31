@@ -41,7 +41,7 @@ code {
 .dropzone {
     font-size:0.8em;
     margin:0;
-
+    padding: 12px 1em;
     min-width:200px;
     display: inline-block;
     border: dotted 3px lightgray;
